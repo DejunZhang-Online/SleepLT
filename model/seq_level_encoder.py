@@ -6,7 +6,6 @@ import math
 import torch.nn.functional as F
 
 class MLPBlock(nn.Sequential):
-    """Transformer MLP block."""
 
     def __init__(self, in_dim: int, mlp_dim: int, dropout: float):
         super().__init__()
