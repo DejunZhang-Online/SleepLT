@@ -12,8 +12,8 @@ class SleepLT(nn.Module):
             num_heads=4,
             hidden_dim=128,
             mlp_dim=128,
-            dropout=0.5,
-            attention_dropout=0.5,
+            dropout=0.1,
+            attention_dropout=0.1,
         )
         self.classifier = nn.Linear(128, num_classes)
         self.dropout = nn.Dropout(0.2)
@@ -27,17 +27,16 @@ class SleepLT(nn.Module):
     def forward(self, x):
         batch_size, num_epochs, num_channels, num_samples = x.shape
         x = x.view(batch_size*num_epochs, 1, -1)
-        x = F.interpolate(x, size=3000, mode='nearest')
+        
         x = self.epoch_encoder(x)
         x = x.view(batch_size, num_epochs, -1)
+        
         _y = x
         x = self.seq_encoder(x)
-        # x = x.view(batch_size*num_epochs, -1)
-        # x = x.view(x.size(0), -1)
+
         y = self.classifier(x)
         if self.out_feature:
             return _y.view(batch_size*num_epochs, -1), y.view(batch_size*num_epochs, -1)
-        y = self.dropout(y)
         return y
     
     def cal_params(self):
